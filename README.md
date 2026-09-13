@@ -1,81 +1,90 @@
-# Pigeon Post — Vercel version
+# Pigeon Post — link version
 
-Same pigeon site, restructured so Vercel hosts both the static page and the
-email-sending backend together, on one domain, with no separate server.
+No email sending at all anymore. Instead:
+
+1. Someone writes a message and picks a pigeon (Classic, Snow, or Chestnut).
+2. The site stores it and hands back a private link, like
+   `https://your-site.vercel.app/?id=a1b2c3d4e5`.
+3. Whoever opens that link sees the pigeon fly in and the message unroll on
+   a little scroll. Nothing is emailed to anyone automatically, and your
+   own email account is never involved.
+
+Links expire automatically after 30 days.
 
 ```
-pigeon-post-vercel/
-├─ index.html              the site (served as a static file)
+pigeon-post-link/
+├─ index.html              the whole site (compose view + delivery view)
 ├─ api/
-│  ├─ send-pigeon.js        serverless function -> POST /api/send-pigeon
-│  ├─ email-template.js     builds the HTML/text email
-│  └─ assets/                pigeon.png, scroll-top.png, scroll-bottom.png
-├─ package.json              lists nodemailer so Vercel installs it
-├─ vercel.json                makes sure the PNGs ship with the function
+│  ├─ create-message.js     POST -> stores a message, returns an id
+│  └─ get-message.js        GET  -> looks up a message by id
+├─ package.json
 └─ .env.example
 ```
 
-## 1. Get SMTP credentials
+## 1. Push this to GitHub
 
-Same as before — any provider works:
-- **Resend** (resend.com): host `smtp.resend.com`, user `resend`, password = API key.
-- **Gmail**: host `smtp.gmail.com`, an "app password" from
-  myaccount.google.com/apppasswords.
-- Postmark / SendGrid / Mailgun / SES also fine.
-
-## 2. Push this folder to GitHub
+If you're replacing the previous version in the same repo:
 
 ```bash
-cd pigeon-post-vercel
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/yourname/pigeon-post.git
-git branch -M main
-git push -u origin main
+cd your-repo-folder
+rm -rf api index.html package.json vercel.json server public
+cp -r /path/to/pigeon-post-link/. .
+git add -A
+git commit -m "Switch to link-based pigeon post (no email)"
+git push
 ```
 
-## 3. Import it into Vercel
+## 2. Add a database (Upstash Redis, via Vercel's Storage tab)
 
-1. Go to vercel.com, sign in with GitHub.
-2. Click **Add New... > Project**, select your repo.
-3. Framework preset: leave as **Other** (it's not Next.js/React — just a
-   static HTML file plus one API function). Root directory: leave as `.`.
-4. Before clicking Deploy, open **Environment Variables** and add:
-   `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL`
-   (same values as your `.env`).
-5. Click **Deploy**.
+This replaces all the SMTP/Gmail setup from before — no app passwords, no
+mail provider signup.
 
-Vercel gives you a URL like `https://pigeon-post.vercel.app`. That's it —
-one link, and both the page and the sending function live there.
+1. Open your project on vercel.com.
+2. Click the **Storage** tab.
+3. Click **Create Database**, choose **Upstash** → **Redis** (sometimes
+   listed under "Marketplace Database Providers").
+4. Follow the prompts to create a small/free database and connect it to
+   this project.
+
+That's it — Vercel automatically adds `UPSTASH_REDIS_REST_URL` and
+`UPSTASH_REDIS_REST_TOKEN` as environment variables on your project. You
+don't need to copy or type these yourself.
+
+## 3. Redeploy
+
+Since connecting a new storage integration changes environment variables,
+trigger one fresh deploy: **Deployments** tab → **⋯** on the latest one →
+**Redeploy**.
 
 ## 4. Test it
 
-Open the deployed URL and release a pigeon. To test the function directly:
+Open your site, write a message, pick a pigeon, click **Create pigeon
+link**. You'll get a link back — open it (in the same browser, an
+incognito window, or send it to a friend) and the pigeon should fly in
+with your message.
+
+To test the API directly:
 
 ```bash
-curl -X POST https://pigeon-post.vercel.app/api/send-pigeon \
+curl -X POST https://your-site.vercel.app/api/create-message \
   -H "Content-Type: application/json" \
-  -d '{"to":"you@example.com","fromName":"Alex","message":"Hey! Just flying by to say hi."}'
+  -d '{"message":"Hey! Just flying by to say hi.","fromName":"Alex","pigeon":"chestnut"}'
 ```
 
-## Testing locally before deploying (optional)
+That returns `{"ok":true,"id":"..."}` — open
+`https://your-site.vercel.app/?id=...` with that id to see it delivered.
 
-```bash
-npm install -g vercel
-cp .env.example .env   # fill in your SMTP details
-vercel dev
-```
+## Notes on the change from the email version
 
-This runs the site and the function together on `http://localhost:3000`,
-matching production behavior.
-
-## Notes
-
-- `index.html` calls `/api/send-pigeon` as a relative path, so it always
-  points at whatever domain it's served from — nothing to update after
-  deploying, and no CORS configuration needed since it's the same origin.
-- Every push to your GitHub repo's main branch triggers a new deploy
-  automatically once the project is connected.
-- Free-tier Vercel functions have a short execution timeout (10s by
-  default), which is plenty for sending one email.
+- The old `api/send-pigeon.js`, `api/email-template.js`, SMTP settings,
+  and Gmail app password are no longer used — you can remove them if
+  they're still in your repo.
+- Nothing sends mail on your behalf anymore, so the "is this a liability"
+  question from before goes away: the worst someone can do with the link
+  is write their own message and share their own link, same as any
+  link-sharing tool.
+- Links aren't unguessable in a cryptographic sense (they're a random
+  10-character id, not a password) — fine for a fun, low-stakes tool
+  between friends, not intended for anything sensitive.
+- Messages are capped at 600 characters and names at 60, same as before,
+  enforced both in the form and on the server.
