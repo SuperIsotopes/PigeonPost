@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/send-pigeon.js": {
+      "includeFiles": "api/assets/**"
+    }
+  }
+}

@@ -354,9 +354,8 @@
 </main>
 
 <script>
-  // Point this at wherever you deploy the server/ folder from this project.
-  // Locally that's usually http://localhost:3000 while testing.
-  const API_URL = 'http://localhost:3000/send-pigeon';
+  // Same-origin serverless function -- no separate server or CORS setup needed.
+  const API_URL = '/api/send-pigeon';
 
   const form = document.getElementById('pigeonForm');
   const toEmail = document.getElementById('toEmail');
