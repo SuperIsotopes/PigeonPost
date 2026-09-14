@@ -61,16 +61,16 @@
     to{ transform:translateX(-140vw); }
   }
 
-  .wire{ position:absolute; left:0; right:0; bottom:18%; height:2px; background:var(--ink-soft); opacity:0.35; }
-  .branch{
-    position:absolute; left:10%; bottom:14.5%; width:180px; height:14px;
-    background:#7a5c3e; border-radius:8px; box-shadow:0 3px 0 rgba(0,0,0,0.12);
+  .mailbox{
+    position:absolute; left:8%; bottom:0; width:92px; height:151px;
   }
+  .mailbox img{ width:100%; height:100%; display:block; object-fit:contain; object-position:bottom; }
 
   .pigeon-wrap{
-    position:absolute; left:14%; bottom:16%; width:130px; height:130px;
+    position:absolute; left:5.5%; bottom:65px; width:130px; height:149px;
     transform-origin:center;
   }
+  .pigeon-group{ display:block; width:100%; height:100%; overflow:visible; }
   .pigeon-wrap.perched .pigeon-group{ animation:idle 3.4s ease-in-out infinite; }
   .pigeon-wrap.perched .wing-back,
   .pigeon-wrap.perched .wing-front{ animation:preen 4.8s ease-in-out infinite; }
@@ -92,19 +92,17 @@
   }
   @keyframes flap{ from{ transform:rotate(6deg); } to{ transform:rotate(-38deg); } }
   @keyframes flyOut{
-    0%{ transform:translate(0,0) rotate(-4deg) scale(0.92); opacity:1; }
-    18%{ transform:translate(8vw,-14vh) rotate(3deg) scale(1); }
-    40%{ transform:translate(30vw,2vh) rotate(-3deg) scale(1.02); }
-    62%{ transform:translate(55vw,-16vh) rotate(4deg) scale(1); }
-    84%{ transform:translate(78vw,4vh) rotate(-2deg) scale(0.98); }
-    100%{ transform:translate(100vw,-10vh) rotate(2deg) scale(0.86); opacity:0; }
+    0%{ transform:translate(0,0) rotate(-2deg) scale(0.94); opacity:1; }
+    15%{ transform:translate(15vw,-3vh) rotate(1deg) scale(1); }
+    50%{ transform:translate(50vw,-4vh) rotate(0deg) scale(1); }
+    85%{ transform:translate(85vw,-2vh) rotate(1deg) scale(0.97); }
+    100%{ transform:translate(102vw,-1vh) rotate(1deg) scale(0.92); opacity:0; }
   }
   @keyframes flyIn{
-    0%{ transform:translate(-100vw,-10vh) rotate(2deg) scale(0.86); opacity:0; }
-    20%{ opacity:1; }
-    40%{ transform:translate(-70vw,4vh) rotate(-2deg) scale(0.98); }
-    62%{ transform:translate(-45vw,-16vh) rotate(4deg) scale(1); }
-    82%{ transform:translate(-16vw,2vh) rotate(-3deg) scale(1.02); }
+    0%{ transform:translate(-102vw,-1vh) rotate(1deg) scale(0.92); opacity:0; }
+    15%{ opacity:1; }
+    50%{ transform:translate(-50vw,-4vh) rotate(0deg) scale(1); }
+    85%{ transform:translate(-15vw,-3vh) rotate(-1deg) scale(1); }
     100%{ transform:translate(0,0) rotate(0deg) scale(1); opacity:1; }
   }
 
@@ -184,16 +182,25 @@
   .scroll-box{ display:none; }
   .scroll-box.show{ display:block; }
   .scroll-roller{
-    height:22px; border-radius:11px;
-    background:linear-gradient(180deg, var(--wood-light) 0%, var(--wood) 100%);
-    border:2px solid #5d4731;
+    height:18px; border-radius:9px;
+    background:var(--wood);
+    position:relative;
   }
-  .scroll-body{
-    background:var(--paper); border-left:2px solid var(--paper-line); border-right:2px solid var(--paper-line);
-    padding:26px 30px; margin:-2px 0;
+  .scroll-roller::before, .scroll-roller::after{
+    content:''; position:absolute; top:0; bottom:0; width:18px; border-radius:50%;
+    background:#6b5236;
+  }
+  .scroll-roller::before{ left:-4px; }
+  .scroll-roller::after{ right:-4px; }
+  .parchment{
+    background:#f4ecd8;
+    border-left:2px solid var(--paper-line);
+    border-right:2px solid var(--paper-line);
+    padding:26px 30px;
+    margin:-1px 0;
   }
   .scroll-message{
-    font-family:'Fraunces', serif; font-size:1.15rem; line-height:1.65; color:var(--ink); white-space:pre-wrap;
+    font-family:'Fraunces', serif; font-size:1.12rem; line-height:1.65; color:var(--ink); white-space:pre-wrap;
   }
   .scroll-sign{ margin-top:18px; font-family:'Space Mono', monospace; font-size:0.8rem; color:var(--ink-soft); }
   .compose-link{
@@ -213,11 +220,12 @@
   <div class="cloud c3"><svg viewBox="0 0 100 40"><ellipse cx="30" cy="24" rx="26" ry="13" fill="#ffffff"/><ellipse cx="60" cy="20" rx="20" ry="14" fill="#ffffff"/><ellipse cx="82" cy="26" rx="16" ry="10" fill="#ffffff"/></svg></div>
   <div class="cloud c4"><svg viewBox="0 0 100 40"><ellipse cx="30" cy="24" rx="20" ry="10" fill="#ffffff"/><ellipse cx="52" cy="20" rx="16" ry="12" fill="#ffffff"/></svg></div>
 
-  <div class="wire"></div>
-  <div class="branch" id="branch"></div>
+  <div class="mailbox">
+    <img src="assets/mailbox.png" alt="A red mailbox on a post" width="344" height="566">
+  </div>
 
   <div class="pigeon-wrap perched" id="pigeonWrap">
-    <svg viewBox="0 0 140 140" class="pigeon-group" id="pigeonGroup">
+    <svg viewBox="0 0 140 160" class="pigeon-group" id="pigeonGroup">
       <path d="M28 82 L4 96 L4 108 L30 96 Z" fill="var(--pigeon-dark)"/>
       <g class="wing-back" style="transform-origin:66px 68px;"><ellipse cx="58" cy="82" rx="26" ry="14" fill="var(--pigeon-dark)"/></g>
       <ellipse cx="70" cy="76" rx="34" ry="28" fill="var(--pigeon-body)"/>
@@ -287,6 +295,28 @@
 </main>
 
 <script>
+  function playChirp(){
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      [0, 0.13].forEach((delay, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const start = now + delay;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(i === 0 ? 1900 : 2300, start);
+        osc.frequency.exponentialRampToValueAtTime(i === 0 ? 2600 : 3000, start + 0.09);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.12, start + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.15);
+      });
+    }catch(e){ /* audio not available -- fail silently */ }
+  }
+
   const PIGEON_VARIANTS = {
     classic: { body:'#8c97ac', dark:'#5b6478', belly:'#f1ece0', pink:'#d98f8f', label:'Classic' },
     snow:    { body:'#e9e5da', dark:'#b9b2a0', belly:'#ffffff', pink:'#e3b8b8', label:'Snow' },
@@ -370,6 +400,7 @@
       pigeonWrap.classList.remove('perched');
       void pigeonWrap.offsetWidth;
       pigeonWrap.classList.add('flying-out');
+      playChirp();
 
       const FLIGHT_MS = 3600;
       const flightDone = new Promise((resolve) => setTimeout(resolve, FLIGHT_MS));
@@ -454,6 +485,7 @@
     applyPigeonColors(record.pigeon || 'classic');
     void pigeonWrap.offsetWidth;
     pigeonWrap.classList.add('flying-in');
+    playChirp();
 
     setTimeout(() => {
       pigeonWrap.classList.remove('flying-in');
@@ -461,12 +493,12 @@
 
       deliveryHeading.textContent = record.fromName ? `A pigeon arrived from ${record.fromName}` : 'A pigeon arrived';
       deliveryContent.innerHTML = `
-        <div class="scroll-roller"></div>
-        <div class="scroll-body">
+        <div class="scroll-roller top"></div>
+        <div class="parchment">
           <div class="scroll-message">${escapeHtml(record.message)}</div>
           ${record.fromName ? `<div class="scroll-sign">&mdash; ${escapeHtml(record.fromName)}</div>` : ''}
         </div>
-        <div class="scroll-roller"></div>
+        <div class="scroll-roller bottom"></div>
       `;
     }, 3200);
   }
