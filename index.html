@@ -163,6 +163,11 @@
   .link-result{ margin-top:20px; padding-top:20px; border-top:1px dashed var(--paper-line); display:none; }
   .link-result.show{ display:block; }
   .link-result p{ font-size:0.86rem; color:var(--ink-soft); margin:0 0 12px; line-height:1.5; }
+  .link-ready-label{
+    font-family:'Space Mono', monospace; font-weight:700; font-size:0.85rem;
+    color:var(--red); margin:-10px 0 16px; display:none; text-align:center;
+  }
+  .link-ready-label.show{ display:block; }
   .link-row{ display:flex; gap:8px; }
   .link-row input{
     flex:1; border:2px solid var(--paper-line); border-radius:3px; padding:10px 10px;
@@ -269,6 +274,7 @@
         <div class="char-count"><span id="count">0</span>/600</div>
       </div>
       <div class="error" id="formError"></div>
+      <p class="link-ready-label" id="linkReadyLabel">Message ready. Link down below!</p>
       <button type="submit" class="send" id="sendBtn">Create pigeon link</button>
     </form>
 
@@ -375,6 +381,7 @@
     const sendBtn = document.getElementById('sendBtn');
     const formError = document.getElementById('formError');
     const linkResult = document.getElementById('linkResult');
+    const linkReadyLabel = document.getElementById('linkReadyLabel');
     const linkOutput = document.getElementById('linkOutput');
     const copyBtn = document.getElementById('copyBtn');
     const pigeonWrap = document.getElementById('pigeonWrap');
@@ -396,6 +403,7 @@
       sendBtn.disabled = true;
       sendBtn.textContent = 'Tying the message on...';
       linkResult.classList.remove('show');
+      linkReadyLabel.classList.remove('show');
 
       pigeonWrap.classList.remove('perched');
       void pigeonWrap.offsetWidth;
@@ -427,6 +435,7 @@
           const url = `${window.location.origin}${window.location.pathname}?id=${result.value.id}`;
           linkOutput.value = url;
           linkResult.classList.add('show');
+          linkReadyLabel.classList.add('show');
           copyBtn.classList.remove('copied');
           copyBtn.textContent = 'Copy';
         } else {
